@@ -17,7 +17,6 @@ public final class CandyCrisis {
 
     private static final int WIDTH = 5;
     private static final int HEIGHT = 3;
-    private static final String ACCEPTED_GAME_STRING = "File reader has found a suitable game string";
     private static final String PADDING = "  ";
     private static final String V_LINE = "-------------------------------";
     private static final String H_LINE = "|";
@@ -48,7 +47,7 @@ public final class CandyCrisis {
     /**
      * Prints the grid to the console
      */
-    public void display() {
+    public final void display() {
         System.out.println(V_LINE);
         for (int n = 0; n < HEIGHT; ++n) {
             for (int m = 0; m < WIDTH; ++m) {
@@ -57,6 +56,21 @@ public final class CandyCrisis {
             System.out.println(H_LINE);
             System.out.println(V_LINE);
         }
+    }
+    
+    /**
+     * Checks if the current configuration is a win
+     * @return result
+     */
+    public final boolean isFinished() {
+        boolean result = true;
+        for (int n = 0; n < WIDTH; ++n) {
+            if (grid[0][n] != grid[2][n]) {
+                result = false;
+                break;
+            }
+        }
+        return result;
     }
     
     /**
