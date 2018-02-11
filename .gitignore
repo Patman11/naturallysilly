@@ -25,3 +25,5 @@ hs_err_pid*
 *.xml
 manifest.mf
 nbproject/*
+/build/
+/dist/
