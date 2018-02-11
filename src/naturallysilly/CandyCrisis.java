@@ -13,11 +13,34 @@ import java.util.List;
  *
  * @author Patrick Bednarski
  */
-public class CandyCrisis {
+public final class CandyCrisis {
 
     private static final int WIDTH = 5;
     private static final int HEIGHT = 3;
     private static final String ACCEPTED_GAME_STRING = "File reader has found a suitable game string";
+    private static final char NULL = '\u0000';
+    
+    private final char[][] grid;
+    
+    /**
+     * Builds a new game using the passed string
+     * The empty spot will be set as null in the grid
+     * @param gameString
+     */
+    public CandyCrisis(String gameString) {
+        grid = new char[HEIGHT][WIDTH];
+        char c;
+        for (int n = 0; n < HEIGHT; ++n) {
+            for (int m = 0; m < WIDTH; ++m) {
+                c = gameString.charAt((n * WIDTH) + m);
+                if (c == 'e') {
+                    grid[n][m] = NULL;
+                } else {
+                    grid[n][m] = c;
+                }
+            }
+        }
+    }
     
     /**
      * Generate game strings from the passed file location 
@@ -34,9 +57,6 @@ public class CandyCrisis {
                 while (temp != null) {
                     parsed = temp.replaceAll("\\s+", "").trim();
                     if (parsed.length() == WIDTH * HEIGHT) {
-                        if (NaturallySilly.DEBUG) {
-                            System.out.println(ACCEPTED_GAME_STRING);
-                        }
                         gameStrings.add(parsed);                        
                     }
                     temp = reader.readLine();

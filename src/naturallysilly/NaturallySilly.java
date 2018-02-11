@@ -24,5 +24,6 @@ public class NaturallySilly {
             }
         }
         List<String> gameStrings = CandyCrisis.parseFile("src/naturallysilly/game.txt");
+        CandyCrisis game = new CandyCrisis(gameStrings.get(0));
     }
 }
