@@ -1,5 +1,7 @@
 package naturallysilly;
 
+import java.util.List;
+
 /**
  * COMP 472 - Artificial Intelligence
  * Candy Crisis
@@ -9,11 +11,18 @@ package naturallysilly;
  * @author 
  */
 public class NaturallySilly {
+    
+    public static boolean DEBUG = false; //add "--debug" as command line argument to enable verbose operation
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        // TODO code application logic here
+        for (String arg : args) {
+            if (arg.equals("--debug")) {
+                DEBUG = true;
+            }
+        }
+        List<String> gameStrings = CandyCrisis.parseFile("src/naturallysilly/game.txt");
     }
 }
