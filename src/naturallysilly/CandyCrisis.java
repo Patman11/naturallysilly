@@ -7,11 +7,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.Scanner;
 
 /**
  *
  * @author Patrick Bednarski
+ * @author Youssef Akallal - 25988322
+ * 
  */
 public class CandyCrisis {
 
@@ -130,4 +136,45 @@ public class CandyCrisis {
         }
         return Collections.unmodifiableList(gameStrings);
     }
+    
+    
+    
+    /* Create queue for storing user's moves */
+    static Queue<Character> moves = new LinkedList<Character>();
+    
+    /* Take user's input as characters that indicates where the empty space will 
+     * move next. 
+     */
+    public final void getUserInput(){
+    	Scanner keyboard = new Scanner(System.in);
+    	boolean exit = false;
+    	while(!exit){
+    		System.out.println("Enter Your Next Move or Press X to exit");
+        	char value = keyboard.next().charAt(0);
+        	if(value=='X'){
+        		exit = true;
+        	}
+        	else{
+        		/*This is where we need to check that the move is valid*/
+        		
+            	moves.add(value);
+        	}
+        	
+    	}
+    	
+    	keyboard.close();
+    }
+    
+    /*Displays the entire path */
+    public final void displayPath(){
+    	Iterator<Character> iterator = moves.iterator();
+    	while(iterator.hasNext()){
+    	  char element = moves.remove();
+    	  System.out.print(element + " ");
+    	}
+    	System.out.println();
+    }
+    
+    
+    
 }
