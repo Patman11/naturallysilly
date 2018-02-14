@@ -17,7 +17,7 @@ import java.util.Scanner;
  *
  * @author Patrick Bednarski
  * @author Youssef Akallal - 25988322
- * 
+ *
  */
 public class CandyCrisis {
 
@@ -41,28 +41,36 @@ public class CandyCrisis {
         private final char VALUE;
         private final int HEIGHT;
         private final int WIDTH;
+
         Keys(char value, int height, int width) {
             this.VALUE = value;
             this.HEIGHT = height;
             this.WIDTH = width;
         }
     }
-    
+
     private static final int WIDTH = 5;
     private static final int HEIGHT = 3;
     private static final String PADDING = "  ";
     private static final String V_LINE = "-------------------------------";
     private static final String H_LINE = "|";
+    private static final String FILE_ERROR = "File not found or not permitted to read";
+    private static final String ENTER_NEXT_MOVE = "Enter your next move or press x to exit: ";
+    private static final String FINISHED_GAME = "Finished game: ";
     private static final char NULL = '\u0000';
-    
+
     private final char[][] grid;
     
+    /* Create queue for storing user's moves */
+    private final Queue<Character> moves;
+
     /**
-     * Builds a new game using the passed string
-     * The empty spot will be set as null in the grid
+     * Builds a new game using the passed string The empty spot will be set as null in the grid
+     * Call startGame() to actually begin playing     *
      * @param gameString
      */
     public CandyCrisis(String gameString) {
+        moves = new LinkedList<>();
         grid = new char[HEIGHT][WIDTH];
         char c;
         for (int n = 0; n < HEIGHT; ++n) {
@@ -76,11 +84,11 @@ public class CandyCrisis {
             }
         }
     }
-    
-    /**
+
+    /*
      * Prints the grid to the console
      */
-    public final void display() {
+    private void display() {
         System.out.println(V_LINE);
         for (int n = 0; n < HEIGHT; ++n) {
             for (int m = 0; m < WIDTH; ++m) {
@@ -90,12 +98,13 @@ public class CandyCrisis {
             System.out.println(V_LINE);
         }
     }
-    
-    /**
+
+    /*
      * Checks if the current configuration is a win
+     *
      * @return result
      */
-    public final boolean isFinished() {
+    private boolean isFinished() {
         boolean result = true;
         for (int n = 0; n < WIDTH; ++n) {
             if (grid[0][n] != grid[2][n]) {
@@ -105,9 +114,45 @@ public class CandyCrisis {
         }
         return result;
     }
+
+    /**
+     * Starts accepting user input so you can play the game
+     */
+    public final void start() {
+        try (Scanner keyboard = new Scanner(System.in)) {
+            boolean exit = false;
+            while (!exit) {
+                display();
+                System.out.println(ENTER_NEXT_MOVE);
+                char value = keyboard.next().charAt(0);
+                if (value == 'x') {
+                    exit = true;
+                    displayPath();
+                    System.out.println(FINISHED_GAME + isFinished());
+                } else {
+                    /*This is where we need to check that the move is valid*/
+                    
+                    moves.add(value);
+                }                
+            }
+        }
+    }
+
+    /*
+     * Display the path taken
+     */
+    private void displayPath() {
+        Iterator<Character> iterator = moves.iterator();
+        while (iterator.hasNext()) {
+            char element = moves.remove();
+            System.out.print(element + " ");
+        }
+        System.out.println();
+    }
     
     /**
-     * Generate game strings from the passed file location 
+     * Generate game strings from the passed file location
+     *
      * @param filename the location of the file to be read
      * @return an unmodifiable List of game strings
      */
@@ -121,60 +166,19 @@ public class CandyCrisis {
                 while (temp != null) {
                     parsed = temp.replaceAll("\\s+", "").trim();
                     if (parsed.length() == WIDTH * HEIGHT) {
-                        gameStrings.add(parsed);                        
+                        gameStrings.add(parsed);
                     }
                     temp = reader.readLine();
                 }
-            } catch (FileNotFoundException ex ) {
+            } catch (FileNotFoundException ex) {
                 System.err.println(ex.toString());
             } catch (IOException ex) {
                 System.err.println(ex.toString());
             }
         } else {
-            System.err.println("File not found or not permitted to read");
+            System.err.println(FILE_ERROR);
             System.exit(1);
         }
         return Collections.unmodifiableList(gameStrings);
     }
-    
-    
-    
-    /* Create queue for storing user's moves */
-    static Queue<Character> moves = new LinkedList<Character>();
-    
-    /* Take user's input as characters that indicates where the empty space will 
-     * move next. 
-     */
-    public final void getUserInput(){
-    	Scanner keyboard = new Scanner(System.in);
-    	boolean exit = false;
-    	while(!exit){
-    		System.out.println("Enter Your Next Move or Press X to exit");
-        	char value = keyboard.next().charAt(0);
-        	if(value=='X'){
-        		exit = true;
-        	}
-        	else{
-        		/*This is where we need to check that the move is valid*/
-        		
-            	moves.add(value);
-        	}
-        	
-    	}
-    	
-    	keyboard.close();
-    }
-    
-    /*Displays the entire path */
-    public final void displayPath(){
-    	Iterator<Character> iterator = moves.iterator();
-    	while(iterator.hasNext()){
-    	  char element = moves.remove();
-    	  System.out.print(element + " ");
-    	}
-    	System.out.println();
-    }
-    
-    
-    
 }
