@@ -61,13 +61,15 @@ public class CandyCrisis {
     private static final char NULL = '\u0000';
 
     private final char[][] grid;
-    
+
     /* Create queue for storing user's moves */
     private final Queue<Character> moves;
 
     /**
-     * Builds a new game using the passed string The empty spot will be set as null in the grid
-     * Call startGame() to actually begin playing     *
+     * Builds a new game using the passed string The empty spot will be set as null in the grid Call
+     * startGame() to actually begin playing
+     *
+     *
      * @param gameString
      */
     public CandyCrisis(String gameString) {
@@ -132,147 +134,85 @@ public class CandyCrisis {
                     System.out.println(FINISHED_GAME + isFinished());
                 } else {
                     /*This is where we need to check that the move is valid*/
-                    if(move(value)) {
-                    	moves.add(value);
+                    if (move(value)) {
+                        moves.add(value);
+                    } else {
+                        System.out.println(INVALID_MOVE);
                     }
-                    else {
-                    	System.out.println(INVALID_MOVE);
-                    }                   
-                }                
+                }
             }
         }
     }
-
-    private boolean move(char candy) {
-    	Keys key = getKeyByValue(candy);
-    	if (key == null) {
-    		return false;
-    	}
-    	int x = key.HEIGHT;
-    	int y = key.WIDTH;
-    	char currentCandy = grid[x][y];
-    	
-    	// Check perimeter
-    	if (x == 0) {  		
-    		if (grid[x + 1][y] == NULL) {
-    			grid[x][y] = NULL;
-    			grid[x + 1][y] = currentCandy;
-    			return true;
-    		}   		
-    		if (y != 0) {   		
-	    		if (grid[x][y - 1] == NULL) {
-	    			grid[x][y] = NULL;
-	    			grid[x][y - 1] = currentCandy;
-	    			return true;
-	    		}
-    		}
-    		if (y != WIDTH - 1) {
-    			if (grid[x][y + 1] == NULL) {
-        			grid[x][y] = NULL;
-        			grid[x][y + 1] = currentCandy;
-        			return true;
-        		}
-    		}
-    	}
-    	if (y == 0) {  		
-    		if (grid[x][y + 1] == NULL) {
-    			grid[x][y] = NULL;
-    			grid[x][y + 1] = currentCandy;
-    			return true;
-    		}   		
-    		if (x != 0) {   		
-	    		if (grid[x - 1][y] == NULL) {
-	    			grid[x][y] = NULL;
-	    			grid[x - 1][y] = currentCandy;
-	    			return true;
-	    		}
-    		}
-    		if (x != HEIGHT - 1) {
-    			if (grid[x + 1][y] == NULL) {
-        			grid[x][y] = NULL;
-        			grid[x + 1][y] = currentCandy;
-        			return true;
-        		}
-    		}
-    	}
-    	if (x == HEIGHT - 1) {
-    		if (grid[x - 1][y] == NULL) {
-    			grid[x][y] = NULL;
-    			grid[x - 1][y] = currentCandy;
-    			return true;
-    		}   		
-    		if (y != 0) {   		
-	    		if (grid[x][y - 1] == NULL) {
-	    			grid[x][y] = NULL;
-	    			grid[x][y - 1] = currentCandy;
-	    			return true;
-	    		}
-    		}
-    		if (y != WIDTH - 1) {
-    			if (grid[x][y + 1] == NULL) {
-        			grid[x][y] = NULL;
-        			grid[x][y + 1] = currentCandy;
-        			return true;
-        		}
-    		}
-    	}
-    	if (y == WIDTH - 1) {
-    		if (grid[x][y - 1] == NULL) {
-    			grid[x][y] = NULL;
-    			grid[x][y - 1] = currentCandy;
-    			return true;
-    		}   		
-    		if (x != 0) {   		
-	    		if (grid[x - 1][y] == NULL) {
-	    			grid[x][y] = NULL;
-	    			grid[x - 1][y] = currentCandy;
-	    			return true;
-	    		}
-    		}
-    		if (x != HEIGHT - 1) {
-    			if (grid[x + 1][y] == NULL) {
-        			grid[x][y] = NULL;
-        			grid[x + 1][y] = currentCandy;
-        			return true;
-        		}
-    		}
-    	}
-    	
-    	// Check inside
-    	if (x != 0 && y != 0 && (x != HEIGHT - 1) && (y != WIDTH - 1)) {
-    		if (grid[x + 1][y] == NULL) {
-    			grid[x][y] = NULL;
-    			grid[x + 1][y] = currentCandy;
-    			return true;
-    		}
-    		else if (grid[x - 1][y] == NULL) {
-    			grid[x][y] = NULL;
-    			grid[x - 1][y] = currentCandy;
-    			return true;
-    		}
-    		else if (grid[x][y + 1] == NULL) {
-    			grid[x][y] = NULL;
-    			grid[x][y + 1] = currentCandy;
-    			return true;
-    		}
-    		else if (grid[x][y - 1] == NULL) {
-    			grid[x][y] = NULL;
-    			grid[x][y - 1] = currentCandy;
-    			return true;
-    		}
-    	}
-    	return false;
+    
+    /*
+     * attempts to move the empty space
+     * @param position the position entered by the user
+     * @return if the move was executed
+     */
+    private boolean move(char position) {
+        Keys key = getKeyByValue(position);
+        Keys empty = getEmptyKey();
+        if (key == null || empty == null) {
+            return false;
+        }
+        if (validate(empty, key)) {
+            swap(empty, key);
+            return true;
+        }
+        return false;
     }
     
-	private Keys getKeyByValue(char value){
-		for (Keys key : Keys.values()) {
-			if(value == key.VALUE) {
-				return key;
-			}
-		}
-		return null;
-	}
+    /*
+     * Checks if the target move is +/- 1 height XOR width from current empty position
+     * @param target the target key
+     * @return 
+     */
+    private boolean validate(Keys initial, Keys target) {
+        if (initial != null) {
+            return (Math.abs(target.HEIGHT - initial.HEIGHT) == 1) ^ (Math.abs(target.WIDTH - initial.WIDTH) == 1);
+        }
+        return false;
+    }
     
+    /*
+     * Unvalidated swap of 2 characters, should not be used
+     * from user input
+     * @param initial position of empty space
+     * @param target desired position of empty space
+     */
+    private void swap(Keys initial, Keys target) {
+        char temp = grid[initial.HEIGHT][initial.WIDTH];
+        grid[initial.HEIGHT][initial.WIDTH] = grid[target.HEIGHT][target.WIDTH];
+        grid[target.HEIGHT][target.WIDTH] = temp;
+    }
+    
+    /*
+     * Loops through keys and returns a key if it matches the character value
+     * @param value the key to be found
+     * @return 
+     */
+    private Keys getKeyByValue(char value) {
+        for (Keys key : Keys.values()) {
+            if (value == key.VALUE) {
+                return key;
+            }
+        }
+        return null;
+    }
+    
+    /*
+     * Loops through all key positions to find empty box
+     * @return key for the empty box
+     */
+    private Keys getEmptyKey() {
+        for (Keys key : Keys.values()) {
+            if (grid[key.HEIGHT][key.WIDTH] == NULL) {
+                return key;
+            }
+        }
+        return null;
+    }
+
     /*
      * Display the path taken
      */
@@ -284,7 +224,7 @@ public class CandyCrisis {
         }
         System.out.println();
     }
-    
+
     /**
      * Generate game strings from the passed file location
      *
