@@ -56,6 +56,7 @@ public class CandyCrisis {
     private static final String H_LINE = "|";
     private static final String FILE_ERROR = "File not found or not permitted to read";
     private static final String ENTER_NEXT_MOVE = "Enter your next move or press x to exit: ";
+    private static final String INVALID_MOVE = "Invalid move. Please try again.";
     private static final String FINISHED_GAME = "Finished game: ";
     private static final char NULL = '\u0000';
 
@@ -131,13 +132,147 @@ public class CandyCrisis {
                     System.out.println(FINISHED_GAME + isFinished());
                 } else {
                     /*This is where we need to check that the move is valid*/
-                    
-                    moves.add(value);
+                    if(move(value)) {
+                    	moves.add(value);
+                    }
+                    else {
+                    	System.out.println(INVALID_MOVE);
+                    }                   
                 }                
             }
         }
     }
 
+    private boolean move(char candy) {
+    	Keys key = getKeyByValue(candy);
+    	if (key == null) {
+    		return false;
+    	}
+    	int x = key.HEIGHT;
+    	int y = key.WIDTH;
+    	char currentCandy = grid[x][y];
+    	
+    	// Check perimeter
+    	if (x == 0) {  		
+    		if (grid[x + 1][y] == NULL) {
+    			grid[x][y] = NULL;
+    			grid[x + 1][y] = currentCandy;
+    			return true;
+    		}   		
+    		if (y != 0) {   		
+	    		if (grid[x][y - 1] == NULL) {
+	    			grid[x][y] = NULL;
+	    			grid[x][y - 1] = currentCandy;
+	    			return true;
+	    		}
+    		}
+    		if (y != WIDTH - 1) {
+    			if (grid[x][y + 1] == NULL) {
+        			grid[x][y] = NULL;
+        			grid[x][y + 1] = currentCandy;
+        			return true;
+        		}
+    		}
+    	}
+    	if (y == 0) {  		
+    		if (grid[x][y + 1] == NULL) {
+    			grid[x][y] = NULL;
+    			grid[x][y + 1] = currentCandy;
+    			return true;
+    		}   		
+    		if (x != 0) {   		
+	    		if (grid[x - 1][y] == NULL) {
+	    			grid[x][y] = NULL;
+	    			grid[x - 1][y] = currentCandy;
+	    			return true;
+	    		}
+    		}
+    		if (x != HEIGHT - 1) {
+    			if (grid[x + 1][y] == NULL) {
+        			grid[x][y] = NULL;
+        			grid[x + 1][y] = currentCandy;
+        			return true;
+        		}
+    		}
+    	}
+    	if (x == HEIGHT - 1) {
+    		if (grid[x - 1][y] == NULL) {
+    			grid[x][y] = NULL;
+    			grid[x - 1][y] = currentCandy;
+    			return true;
+    		}   		
+    		if (y != 0) {   		
+	    		if (grid[x][y - 1] == NULL) {
+	    			grid[x][y] = NULL;
+	    			grid[x][y - 1] = currentCandy;
+	    			return true;
+	    		}
+    		}
+    		if (y != WIDTH - 1) {
+    			if (grid[x][y + 1] == NULL) {
+        			grid[x][y] = NULL;
+        			grid[x][y + 1] = currentCandy;
+        			return true;
+        		}
+    		}
+    	}
+    	if (y == WIDTH - 1) {
+    		if (grid[x][y - 1] == NULL) {
+    			grid[x][y] = NULL;
+    			grid[x][y - 1] = currentCandy;
+    			return true;
+    		}   		
+    		if (x != 0) {   		
+	    		if (grid[x - 1][y] == NULL) {
+	    			grid[x][y] = NULL;
+	    			grid[x - 1][y] = currentCandy;
+	    			return true;
+	    		}
+    		}
+    		if (x != HEIGHT - 1) {
+    			if (grid[x + 1][y] == NULL) {
+        			grid[x][y] = NULL;
+        			grid[x + 1][y] = currentCandy;
+        			return true;
+        		}
+    		}
+    	}
+    	
+    	// Check inside
+    	if (x != 0 && y != 0 && (x != HEIGHT - 1) && (y != WIDTH - 1)) {
+    		if (grid[x + 1][y] == NULL) {
+    			grid[x][y] = NULL;
+    			grid[x + 1][y] = currentCandy;
+    			return true;
+    		}
+    		else if (grid[x - 1][y] == NULL) {
+    			grid[x][y] = NULL;
+    			grid[x - 1][y] = currentCandy;
+    			return true;
+    		}
+    		else if (grid[x][y + 1] == NULL) {
+    			grid[x][y] = NULL;
+    			grid[x][y + 1] = currentCandy;
+    			return true;
+    		}
+    		else if (grid[x][y - 1] == NULL) {
+    			grid[x][y] = NULL;
+    			grid[x][y - 1] = currentCandy;
+    			return true;
+    		}
+    	}
+    	return false;
+    }
+    
+	private Keys getKeyByValue(char value){
+		for (Keys key : Keys.values()) {
+			if(value == key.VALUE) {
+				return key;
+			}
+		}
+		return null;
+	}
+    
     /*
      * Display the path taken
      */
