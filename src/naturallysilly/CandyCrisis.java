@@ -169,7 +169,10 @@ public class CandyCrisis {
      */
     private boolean validate(Keys initial, Keys target) {
         if (initial != null) {
-            return (Math.abs(target.HEIGHT - initial.HEIGHT) == 1) ^ (Math.abs(target.WIDTH - initial.WIDTH) == 1);
+            return (Math.abs(target.HEIGHT - initial.HEIGHT) == 1 &&
+                    Math.abs(target.WIDTH - initial.WIDTH) == 0) ^
+                    (Math.abs(target.WIDTH - initial.WIDTH) == 1 &&
+                    Math.abs(target.HEIGHT - initial.HEIGHT) == 0);
         }
         return false;
     }
