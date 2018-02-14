@@ -126,6 +126,11 @@ public class CandyCrisis {
             boolean exit = false;
             while (!exit) {
                 display();
+                if (isFinished()) {
+                    displayPath();
+                    System.out.println(FINISHED_GAME + "true");
+                    break;
+                }
                 System.out.println(ENTER_NEXT_MOVE);
                 char value = keyboard.next().charAt(0);
                 if (value == 'x') {
