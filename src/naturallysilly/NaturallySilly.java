@@ -4,11 +4,11 @@ import java.util.List;
 
 /**
  * COMP 472 - Artificial Intelligence
- * Candy Crisis
+ *
  * @author Patrick Bednarski - 40002239
  * @author Youssef Akallal - 25988322
- * @author 
- * @author 
+ * @author Ali Douch - 27578253
+ * @author Anthony Dubois - 26647375
  */
 public class NaturallySilly {
 
