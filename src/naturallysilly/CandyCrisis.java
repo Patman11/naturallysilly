@@ -63,11 +63,9 @@ public class CandyCrisis {
     private static final char NULL = '\u0000';
 
     private final char[][] grid;
-    
-    //output file
-    PrintWriter outputStream = null;
-    long startTime;
-    long endTime;
+
+    private long startTime;
+    private long endTime;
 
     /* Create queue for storing user's moves */
     private final Queue<Character> moves;
@@ -129,32 +127,28 @@ public class CandyCrisis {
      * Starts accepting user input so you can play the game
      */
     public final void start() {
-        OpenOutputFile();
-        startTime = System.nanoTime();
         try (Scanner keyboard = new Scanner(System.in)) {
             boolean exit = false;
+            startTime = System.nanoTime();
             while (!exit) {
                 display();
                 if (isFinished()) {
-                    displayPath();
+                    WriteOutputFile();
+                    endTime = System.nanoTime();
                     System.out.println(FINISHED_GAME + "true");
-                    WriteOutputTime();
-                    outputStream.close();
                     break;
                 }
                 System.out.println(ENTER_NEXT_MOVE);
                 char value = keyboard.next().charAt(0);
                 if (value == 'x') {
+                    endTime = System.nanoTime();
+                    WriteOutputFile();
                     exit = true;
-                    displayPath();
                     System.out.println(FINISHED_GAME + isFinished());
-                    endTime   = System.nanoTime();                    
-                    WriteOutputTime();
-                    outputStream.close();
                 } else {
                     /*This is where we need to check that the move is valid*/
                     if (move(value)) {
-                        moves.add(value);                       
+                        moves.add(value);
                     } else {
                         System.out.println(INVALID_MOVE);
                     }
@@ -162,7 +156,7 @@ public class CandyCrisis {
             }
         }
     }
-    
+
     /*
      * attempts to move the empty space
      * @param position the position entered by the user
@@ -180,19 +174,19 @@ public class CandyCrisis {
         }
         return false;
     }
-    
+
     /*
      * Checks if the target move is +/- 1 height XOR width from current empty position
      * @param target the target key
      * @return 
      */
     private boolean validate(Keys initial, Keys target) {
-        return (Math.abs(target.HEIGHT - initial.HEIGHT) == 1 &&
-                Math.abs(target.WIDTH - initial.WIDTH) == 0) ^
-                (Math.abs(target.WIDTH - initial.WIDTH) == 1 &&
-                Math.abs(target.HEIGHT - initial.HEIGHT) == 0);
+        return (Math.abs(target.HEIGHT - initial.HEIGHT) == 1
+                && Math.abs(target.WIDTH - initial.WIDTH) == 0)
+                ^ (Math.abs(target.WIDTH - initial.WIDTH) == 1
+                && Math.abs(target.HEIGHT - initial.HEIGHT) == 0);
     }
-    
+
     /*
      * Unvalidated swap of 2 characters, should not be used
      * from user input
@@ -204,7 +198,7 @@ public class CandyCrisis {
         grid[initial.HEIGHT][initial.WIDTH] = grid[target.HEIGHT][target.WIDTH];
         grid[target.HEIGHT][target.WIDTH] = temp;
     }
-    
+
     /*
      * Loops through keys and returns a key if it matches the character value
      * @param value the key to be found
@@ -218,7 +212,7 @@ public class CandyCrisis {
         }
         return null;
     }
-    
+
     /*
      * Loops through all key positions to find empty box
      * @return key for the empty box
@@ -234,15 +228,17 @@ public class CandyCrisis {
 
     /*
      * Display the path taken
+     * @param output the output file to also write the path too
      */
-    private void displayPath() {
+    private void displayPath(PrintWriter output) {
         Iterator<Character> iterator = moves.iterator();
         while (iterator.hasNext()) {
             char element = moves.remove();
             System.out.print(element + " ");
-             WriteOutputPath(element);
+            output.print(element + " ");
         }
         System.out.println();
+        output.println();
     }
 
     /**
@@ -276,48 +272,18 @@ public class CandyCrisis {
         }
         return Collections.unmodifiableList(gameStrings);
     }
-    
+
     /**
      * Open the output file and check for error
      */
-    public void OpenOutputFile(){
-         try
-        {
-            outputStream = new PrintWriter(new FileOutputStream("../src/naturallysilly/Output.txt"));
-            
-        }
-        catch (FileNotFoundException e){
+    public void WriteOutputFile() {
+        try (PrintWriter output = new PrintWriter(new FileOutputStream("output.txt"))) {
+            long totalTime = endTime - startTime;
+            displayPath(output);
+            output.println(totalTime + "ms");
+        } catch (FileNotFoundException e) {
             System.out.println("Error opening the file output.txt");
             System.exit(0);
-        }       
-     
-        
-    }
-    
-    /**
-     * Write the all valid input in the output file
-     *
-     * @param s is the valid input used
-     */
-    public void WriteOutputPath(char s){
-        
-       
-        outputStream.print(s);        
-        
-        
-    }
-    
-    /**
-     * Write the time in milliseconds to finish puzzle
-     *
-     * @param long s is the total time since start()
-     */
-    public void WriteOutputTime(){
-        
-        long totalTime = endTime - startTime;        
-        outputStream.println(); 
-        outputStream.println(totalTime + "ms");        
-        
-        
+        }
     }
 }
