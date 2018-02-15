@@ -27,3 +27,6 @@ manifest.mf
 nbproject/*
 /build/
 /dist/
+/naturallysilly/nbproject/private/
+/naturallysilly/dist/
+/naturallysilly/build/

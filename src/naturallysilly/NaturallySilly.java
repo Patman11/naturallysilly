@@ -16,7 +16,7 @@ public class NaturallySilly {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        List<String> gameStrings = CandyCrisis.parseFile("src/naturallysilly/game.txt");
+        List<String> gameStrings = CandyCrisis.parseFile("../src/naturallysilly/game.txt");
         CandyCrisis game = new CandyCrisis(gameStrings.get(0));
         game.start();
     }

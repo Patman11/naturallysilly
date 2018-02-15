@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,6 +63,11 @@ public class CandyCrisis {
     private static final char NULL = '\u0000';
 
     private final char[][] grid;
+    
+    //output file
+    PrintWriter outputStream = null;
+    long startTime;
+    long endTime;
 
     /* Create queue for storing user's moves */
     private final Queue<Character> moves;
@@ -122,6 +129,8 @@ public class CandyCrisis {
      * Starts accepting user input so you can play the game
      */
     public final void start() {
+        OpenOutputFile();
+        startTime = System.nanoTime();
         try (Scanner keyboard = new Scanner(System.in)) {
             boolean exit = false;
             while (!exit) {
@@ -129,6 +138,8 @@ public class CandyCrisis {
                 if (isFinished()) {
                     displayPath();
                     System.out.println(FINISHED_GAME + "true");
+                    WriteOutputTime();
+                    outputStream.close();
                     break;
                 }
                 System.out.println(ENTER_NEXT_MOVE);
@@ -137,10 +148,13 @@ public class CandyCrisis {
                     exit = true;
                     displayPath();
                     System.out.println(FINISHED_GAME + isFinished());
+                    endTime   = System.nanoTime();                    
+                    WriteOutputTime();
+                    outputStream.close();
                 } else {
                     /*This is where we need to check that the move is valid*/
                     if (move(value)) {
-                        moves.add(value);
+                        moves.add(value);                       
                     } else {
                         System.out.println(INVALID_MOVE);
                     }
@@ -226,6 +240,7 @@ public class CandyCrisis {
         while (iterator.hasNext()) {
             char element = moves.remove();
             System.out.print(element + " ");
+             WriteOutputPath(element);
         }
         System.out.println();
     }
@@ -260,5 +275,49 @@ public class CandyCrisis {
             System.exit(1);
         }
         return Collections.unmodifiableList(gameStrings);
+    }
+    
+    /**
+     * Open the output file and check for error
+     */
+    public void OpenOutputFile(){
+         try
+        {
+            outputStream = new PrintWriter(new FileOutputStream("../src/naturallysilly/Output.txt"));
+            
+        }
+        catch (FileNotFoundException e){
+            System.out.println("Error opening the file output.txt");
+            System.exit(0);
+        }       
+     
+        
+    }
+    
+    /**
+     * Write the all valid input in the output file
+     *
+     * @param s is the valid input used
+     */
+    public void WriteOutputPath(char s){
+        
+       
+        outputStream.print(s);        
+        
+        
+    }
+    
+    /**
+     * Write the time in milliseconds to finish puzzle
+     *
+     * @param long s is the total time since start()
+     */
+    public void WriteOutputTime(){
+        
+        long totalTime = endTime - startTime;        
+        outputStream.println(); 
+        outputStream.println(totalTime + "ms");        
+        
+        
     }
 }
