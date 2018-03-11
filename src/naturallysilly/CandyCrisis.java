@@ -61,10 +61,11 @@ public class CandyCrisis {
     private static final String ENTER_NEXT_MOVE = "Enter your next move or press x to exit: ";
     private static final String INVALID_MOVE = "Invalid move. Please try again.";
     private static final String FINISHED_GAME = "Finished game: ";
+    private static final String VALID_MOVES = "Valid moves: ";
     private static final char NULL = '\u0000';
 
-    private final char[][] grid;
-
+    private final char[][] grid; //actual game grid
+    private final Keys[][] gridKeys; //grid displaying input keys, also used 
     private long startTime;
     private long endTime;
 
@@ -81,6 +82,7 @@ public class CandyCrisis {
     public CandyCrisis(String gameString) {
         moves = new LinkedList<>();
         grid = new char[HEIGHT][WIDTH];
+        gridKeys = new Keys[HEIGHT][WIDTH];
         char c;
         for (int n = 0; n < HEIGHT; ++n) {
             for (int m = 0; m < WIDTH; ++m) {
@@ -91,6 +93,9 @@ public class CandyCrisis {
                     grid[n][m] = c;
                 }
             }
+        }
+        for (Keys key: Keys.values()) {
+            gridKeys[key.HEIGHT][key.WIDTH] = key;
         }
     }
 
@@ -133,6 +138,7 @@ public class CandyCrisis {
             startTime = System.nanoTime();
             while (!exit) {
                 display();
+                displayValidMoves();
                 if (isFinished()) {
                     WriteOutputFile();
                     endTime = System.nanoTime();
@@ -186,6 +192,53 @@ public class CandyCrisis {
                 && Math.abs(target.WIDTH - initial.WIDTH) == 0)
                 ^ (Math.abs(target.WIDTH - initial.WIDTH) == 1
                 && Math.abs(target.HEIGHT - initial.HEIGHT) == 0);
+    }
+    
+    /*
+     * Computes the valid moves fromt the current empty position
+     * IMPORTANT: always returns an array of length 4
+     * Valid moves will be inserted sequentially into the array
+     * Don't be clever and change this to an arraylist
+     * This is done to keep the heuristic evaluation as fast as possible
+     * @return the valid moves
+     */
+    private Keys[] getValidMoves() {
+        int currentArrayPosition = 0;
+        Keys[] validMoves = new Keys[4];
+        Keys empty = getEmptyKey();
+        if (empty != null) {
+            if (empty.HEIGHT - 1 >= 0) {
+                validMoves[currentArrayPosition] = gridKeys[empty.HEIGHT - 1][empty.WIDTH];
+                ++currentArrayPosition;
+            }
+            if (empty.WIDTH + 1 < WIDTH) {
+                validMoves[currentArrayPosition] = gridKeys[empty.HEIGHT][empty.WIDTH + 1];
+                ++currentArrayPosition;
+            }
+            if (empty.HEIGHT + 1 < HEIGHT) {
+                validMoves[currentArrayPosition] = gridKeys[empty.HEIGHT + 1][empty.WIDTH];
+                ++currentArrayPosition;
+            }
+            if (empty.WIDTH - 1 >= 0) {
+                validMoves[currentArrayPosition] = gridKeys[empty.HEIGHT][empty.WIDTH - 1];
+                ++currentArrayPosition;
+            }
+        }
+        return validMoves;
+    }
+    
+    
+    private void displayValidMoves() {
+        Keys[] validMoves = getValidMoves();
+        System.out.print(VALID_MOVES);
+        for (Keys key : validMoves) {
+            if (key != null) {
+                System.out.print(key.VALUE + ", ");
+            } else {
+                break;
+            }
+        }
+        System.out.println();
     }
 
     /*
