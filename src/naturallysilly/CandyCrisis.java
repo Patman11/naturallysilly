@@ -62,6 +62,7 @@ public class CandyCrisis {
     private static final String INVALID_MOVE = "Invalid move. Please try again.";
     private static final String FINISHED_GAME = "Finished game: ";
     private static final String VALID_MOVES = "Valid moves: ";
+    private static final String CURRENT_EVALUATION = "Current evaluation: ";
     private static final char NULL = '\u0000';
 
     private final char[][] grid; //actual game grid
@@ -94,7 +95,7 @@ public class CandyCrisis {
                 }
             }
         }
-        for (Keys key: Keys.values()) {
+        for (Keys key : Keys.values()) {
             gridKeys[key.HEIGHT][key.WIDTH] = key;
         }
     }
@@ -139,6 +140,7 @@ public class CandyCrisis {
             while (!exit) {
                 display();
                 displayValidMoves();
+                System.out.println(CURRENT_EVALUATION + evaluatePosition());
                 if (isFinished()) {
                     WriteOutputFile();
                     endTime = System.nanoTime();
@@ -193,7 +195,7 @@ public class CandyCrisis {
                 ^ (Math.abs(target.WIDTH - initial.WIDTH) == 1
                 && Math.abs(target.HEIGHT - initial.HEIGHT) == 0);
     }
-    
+
     /*
      * Computes the valid moves fromt the current empty position
      * IMPORTANT: always returns an array of length 4
@@ -226,8 +228,10 @@ public class CandyCrisis {
         }
         return validMoves;
     }
-    
-    
+
+    /**
+     * Displays the valid moves to console
+     */
     private void displayValidMoves() {
         Keys[] validMoves = getValidMoves();
         System.out.print(VALID_MOVES);
@@ -239,6 +243,44 @@ public class CandyCrisis {
             }
         }
         System.out.println();
+    }
+    
+    /*
+     * Heuristic, searches for the closest matching charater
+     * for each character in the bottom row
+     * @return the evaluation
+     */
+    private int evaluatePosition() {
+        int result = 0, bottomRow = HEIGHT - 1, toMatchY, toMatchX;
+        char toMatch;
+        for (int n = 0; n < WIDTH; ++n) {
+            toMatch = grid[bottomRow][n];
+            if (toMatch == NULL) {
+                continue;
+            }
+            outerloop:
+            for (int y = 0; y < HEIGHT; ++y) {
+                //search row towards the left
+                for (int x = n; x < WIDTH; ++x) {
+                    if (toMatch == grid[y][x]) {
+                        toMatchY = bottomRow - (bottomRow - y); //this should always be positive
+                        toMatchX = (n - x < 0 ? x - n : n - x); //might be negagive, make it positive
+                        result += toMatchY + toMatchX;
+                        break outerloop;
+                    }
+                }
+                //search row towards the right
+                for (int x = n - 1; x >= 0; --x) {
+                    if (toMatch == grid[y][x]) {
+                        toMatchY = bottomRow - (bottomRow - y); //this should always be positive
+                        toMatchX = (n - x < 0 ? x - n : n - x); //might be negagive, make it positive
+                        result += toMatchY + toMatchX;
+                        break outerloop;
+                    }
+                }
+            }
+        }
+        return result;
     }
 
     /*
