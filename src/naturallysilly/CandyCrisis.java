@@ -50,7 +50,8 @@ public class CandyCrisis {
             this.WIDTH = width;
         }
     }
-
+    
+    private static int objectCount = 1;
     private static final int WIDTH = 5;
     private static final int HEIGHT = 3;
     private static final String PADDING = "  ";
@@ -71,6 +72,7 @@ public class CandyCrisis {
     private long startTime;
     private long endTime;
     private final Queue<Character> moves;
+    private final int id;
 
     /**
      * Builds a new game using the passed string The empty spot will be set as null in the grid Call
@@ -99,6 +101,8 @@ public class CandyCrisis {
         for (Keys key : Keys.values()) {
             gridKeys[key.HEIGHT][key.WIDTH] = key;
         }
+        id = objectCount;
+        ++objectCount;
     }
 
     /*
@@ -381,7 +385,7 @@ public class CandyCrisis {
      * Open the output file and check for error
      */
     public void WriteOutputFile() {
-        try (PrintWriter output = new PrintWriter(new FileOutputStream("output.txt"))) {
+        try (PrintWriter output = new PrintWriter(new FileOutputStream("output" + id + ".txt"))) {
             long totalTime = endTime - startTime;
             displayPath(output);
             output.println(totalTime + "ms");
