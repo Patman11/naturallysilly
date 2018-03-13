@@ -18,6 +18,14 @@ public class AlgorithmA {
     public AlgorithmA(CandyCrisis game) {
         comparator = new CandyCrisisComparator();
         queue = new PriorityQueue<>(INITIAL_CAPACITY, comparator);
-        
+        queue.add(game);
+    }
+    
+    public void start() {
+        CandyCrisis currentState;
+//        while (true) {
+//            currentState = queue.poll();
+//            //magic happens here
+//        }
     }
 }

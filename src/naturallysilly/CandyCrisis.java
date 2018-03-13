@@ -22,34 +22,6 @@ import java.util.Queue;
  * @author Anthony Dubois - 26647375
  */
 public class CandyCrisis {
-
-    //maps input keys to grid array positions
-    private static enum Keys {
-        A('a', 0, 0),
-        B('b', 0, 1),
-        C('c', 0, 2),
-        D('d', 0, 3),
-        E('e', 0, 4),
-        F('f', 1, 0),
-        G('g', 1, 1),
-        H('h', 1, 2),
-        I('i', 1, 3),
-        J('j', 1, 4),
-        K('k', 2, 0),
-        L('l', 2, 1),
-        M('m', 2, 2),
-        N('n', 2, 3),
-        O('o', 2, 4);
-        private final char VALUE;
-        private final int HEIGHT;
-        private final int WIDTH;
-
-        Keys(char value, int height, int width) {
-            this.VALUE = value;
-            this.HEIGHT = height;
-            this.WIDTH = width;
-        }
-    }
     
     private static int objectCount = 1;
     private static final int WIDTH = 5;
