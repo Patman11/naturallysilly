@@ -348,6 +348,7 @@ public class CandyCrisis {
         if (replaceLastPosition) {
             ++cost;
             lastPosition = initial;
+            moves.add(target.VALUE);
         }
     }
 
