@@ -67,10 +67,9 @@ public class CandyCrisis {
 
     private final char[][] grid; //actual game grid
     private final Keys[][] gridKeys; //grid displaying input keys, also used 
+    private Keys lastPosition = null; //will store the last position upon invoking swap()
     private long startTime;
     private long endTime;
-
-    /* Create queue for storing user's moves */
     private final Queue<Character> moves;
 
     /**
@@ -178,7 +177,7 @@ public class CandyCrisis {
             return false;
         }
         if (validate(empty, key)) {
-            swap(empty, key);
+            swap(empty, key, false);
             return true;
         }
         return false;
@@ -256,6 +255,7 @@ public class CandyCrisis {
         for (int n = 0; n < WIDTH; ++n) {
             toMatch = grid[bottomRow][n];
             if (toMatch == NULL) {
+                ++result;
                 continue;
             }
             outerloop:
@@ -288,11 +288,15 @@ public class CandyCrisis {
      * from user input
      * @param initial position of empty space
      * @param target desired position of empty space
+     * @param preserveInitial keep the last position in memory?
      */
-    private void swap(Keys initial, Keys target) {
+    private void swap(Keys initial, Keys target, boolean preserveInitial) {
         char temp = grid[initial.HEIGHT][initial.WIDTH];
         grid[initial.HEIGHT][initial.WIDTH] = grid[target.HEIGHT][target.WIDTH];
         grid[target.HEIGHT][target.WIDTH] = temp;
+        if(preserveInitial) {
+            lastPosition = initial;
+        }
     }
 
     /*
