@@ -6,7 +6,10 @@ package naturallysilly;
  * @author Youssef Akallal - 25988322
  * @author Ali Douch - 27578253
  * @author Anthony Dubois - 26647375
+ * 
+ * This enum maps inputs to array grid position
  */
+
 public enum Keys {
     A('a', 0, 0),
     B('b', 0, 1),

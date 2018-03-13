@@ -36,15 +36,80 @@ public class CandyCrisis {
     private static final String VALID_MOVES = "Valid moves: ";
     private static final String CURRENT_EVALUATION = "Current evaluation: ";
     private static final char NULL = '\u0000';
+    private static final Keys[][] GRID_KEYS = new Keys[HEIGHT][WIDTH]; //grid displaying input keys
 
-    private final char[][] grid; //actual game grid
-    private final Keys[][] gridKeys; //grid displaying input keys, also used 
+    private final char[][] grid; //actual game grid 
     private Keys lastPosition; //will store the last position upon invoking swap()
     private int cost;
-    private long startTime;
     private long endTime;
+    private long startTime;
     private final Queue<Character> moves;
-    private final int id;
+    
+    public final int id; //id can be public since it's final anyway
+    
+    /**
+     * 
+     * @return the start time 
+     */
+    public final long getStartTime() {
+        return startTime;
+    }
+    
+    /**
+     * Sets the start time
+     * @param startTime 
+     */
+    public final void setStartTime(long startTime) {
+        this.startTime = startTime;
+    }
+    
+    /**
+     * Sets the end time
+     * @param endTime 
+     */
+    public final void setEndTime(long endTime) {
+        this.endTime = endTime;
+    }
+    
+    /**
+     * 
+     * @return the last position
+     */
+    public final Keys getLastPosition() {
+        return lastPosition;
+    }
+    
+    /**
+     * 
+     * @return the cost
+     */
+    public final int getCost() {
+        return cost;
+    }
+    
+    /**
+     * 
+     * @return a deep copy of the moves
+     */
+    public final Queue<Character> getMoves() {
+        Queue<Character> movesCopy = new LinkedList<>();
+        moves.forEach((move) -> {movesCopy.add(move);});
+        return movesCopy;
+    }
+    
+    /**
+     * 
+     * @return a deep copy of the moves
+     */
+    public final char[][] getGrid() {
+        char[][] gridCopy = new char[HEIGHT][WIDTH];
+        for (int n = 0; n < HEIGHT; ++n) {
+            for (int m = 0; m < WIDTH; ++m) {
+                gridCopy[n][m] = grid[n][m];
+            }
+        }
+        return gridCopy;
+    } 
 
     /**
      * Builds a new game using the passed string The empty spot will be set as null in the grid Call
@@ -56,7 +121,6 @@ public class CandyCrisis {
     public CandyCrisis(String gameString) {
         moves = new LinkedList<>();
         grid = new char[HEIGHT][WIDTH];
-        gridKeys = new Keys[HEIGHT][WIDTH];
         lastPosition = null;
         cost = 0;
         char c;
@@ -70,11 +134,19 @@ public class CandyCrisis {
                 }
             }
         }
-        for (Keys key : Keys.values()) {
-            gridKeys[key.HEIGHT][key.WIDTH] = key;
-        }
         id = objectCount;
         ++objectCount;
+        if (GRID_KEYS[0][0] == null) {
+            generateKeyMap();
+        }
+    }
+    
+    public CandyCrisis(CandyCrisis orig) {
+        moves = orig.getMoves();
+        grid = orig.getGrid();
+        lastPosition = orig.getLastPosition();
+        cost = orig.getCost();
+        id = orig.id; //DONT INCREMENT THE ID
     }
 
     /*
@@ -91,12 +163,12 @@ public class CandyCrisis {
         }
     }
 
-    /*
+    /**
      * Checks if the current configuration is a win
      *
      * @return result
      */
-    private boolean isFinished() {
+    public final boolean isFinished() {
         boolean result = true;
         for (int n = 0; n < WIDTH; ++n) {
             if (grid[0][n] != grid[2][n]) {
@@ -137,7 +209,7 @@ public class CandyCrisis {
                 && Math.abs(target.HEIGHT - initial.HEIGHT) == 0);
     }
 
-    /*
+    /**
      * Computes the valid moves fromt the current empty position
      * IMPORTANT: always returns an array of length 4
      * Valid moves will be inserted sequentially into the array
@@ -145,25 +217,25 @@ public class CandyCrisis {
      * This is done to keep the heuristic evaluation as fast as possible
      * @return the valid moves
      */
-    private Keys[] getValidMoves() {
+    public final Keys[] getValidMoves() {
         int currentArrayPosition = 0;
         Keys[] validMoves = new Keys[4];
         Keys empty = getEmptyKey();
         if (empty != null) {
             if (empty.HEIGHT - 1 >= 0) {
-                validMoves[currentArrayPosition] = gridKeys[empty.HEIGHT - 1][empty.WIDTH];
+                validMoves[currentArrayPosition] = GRID_KEYS[empty.HEIGHT - 1][empty.WIDTH];
                 ++currentArrayPosition;
             }
             if (empty.WIDTH + 1 < WIDTH) {
-                validMoves[currentArrayPosition] = gridKeys[empty.HEIGHT][empty.WIDTH + 1];
+                validMoves[currentArrayPosition] = GRID_KEYS[empty.HEIGHT][empty.WIDTH + 1];
                 ++currentArrayPosition;
             }
             if (empty.HEIGHT + 1 < HEIGHT) {
-                validMoves[currentArrayPosition] = gridKeys[empty.HEIGHT + 1][empty.WIDTH];
+                validMoves[currentArrayPosition] = GRID_KEYS[empty.HEIGHT + 1][empty.WIDTH];
                 ++currentArrayPosition;
             }
             if (empty.WIDTH - 1 >= 0) {
-                validMoves[currentArrayPosition] = gridKeys[empty.HEIGHT][empty.WIDTH - 1];
+                validMoves[currentArrayPosition] = GRID_KEYS[empty.HEIGHT][empty.WIDTH - 1];
                 ++currentArrayPosition;
             }
         }
@@ -262,14 +334,14 @@ public class CandyCrisis {
         }
     }
 
-    /*
+    /**
      * Unvalidated swap of 2 characters, should not be used
      * from user input
      * @param initial position of empty space
      * @param target desired position of empty space
-     * @param changeInitial when committing to a move, set to true so the previous move is preserved
+     * @param replaceLastPosition when committing to a move, set to true so the previous move is preserved
      */
-    private void swap(Keys initial, Keys target, boolean replaceLastPosition) {
+    public void swap(Keys initial, Keys target, boolean replaceLastPosition) {
         char temp = grid[initial.HEIGHT][initial.WIDTH];
         grid[initial.HEIGHT][initial.WIDTH] = grid[target.HEIGHT][target.WIDTH];
         grid[target.HEIGHT][target.WIDTH] = temp;
@@ -293,11 +365,11 @@ public class CandyCrisis {
         return null;
     }
 
-    /*
+    /**
      * Loops through all key positions to find empty box
      * @return key for the empty box
      */
-    private Keys getEmptyKey() {
+    public final Keys getEmptyKey() {
         for (Keys key : Keys.values()) {
             if (grid[key.HEIGHT][key.WIDTH] == NULL) {
                 return key;
@@ -319,6 +391,15 @@ public class CandyCrisis {
         }
         System.out.println();
         output.println();
+    }
+    
+    /*
+     * Builds the key map
+     */
+    private static void generateKeyMap() {
+        for (Keys key : Keys.values()) {
+            GRID_KEYS[key.HEIGHT][key.WIDTH] = key;
+        }
     }
 
     /**

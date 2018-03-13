@@ -15,17 +15,44 @@ public class AlgorithmA {
     private final PriorityQueue<CandyCrisis> queue;
     private final CandyCrisisComparator comparator;
     
+    /**
+     * prepares a new game to be run through A
+     * @param game 
+     */
     public AlgorithmA(CandyCrisis game) {
         comparator = new CandyCrisisComparator();
         queue = new PriorityQueue<>(INITIAL_CAPACITY, comparator);
         queue.add(game);
     }
     
+    /**
+     * Starts running Algorithm A
+     */
     public void start() {
-        CandyCrisis currentState;
-//        while (true) {
-//            currentState = queue.poll();
-//            //magic happens here
-//        }
+        CandyCrisis currentState, newState;
+        Keys[] nextMoves;
+        Keys empty;
+        queue.peek().setStartTime(System.currentTimeMillis());
+        while (true) {
+            currentState = queue.poll();
+            if (currentState.isFinished()) {
+                currentState.setEndTime(System.currentTimeMillis());
+                currentState.WriteOutputFile();
+                break;
+            }
+            nextMoves = currentState.getValidMoves();
+            empty = currentState.getEmptyKey();
+            for (Keys nextMove : nextMoves) {
+                if (nextMove == null) {
+                    break;
+                }
+                if (nextMove == currentState.getLastPosition()) {
+                    continue;
+                }
+                newState = new CandyCrisis(currentState);
+                newState.swap(empty, nextMove, true);
+                queue.add(newState);
+            }
+        }
     }
 }

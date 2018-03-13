@@ -10,7 +10,7 @@ import java.util.Comparator;
  * @author Anthony Dubois - 26647375
  */
 public class CandyCrisisComparator implements Comparator<CandyCrisis> {
-
+    
     @Override
     public int compare(CandyCrisis a, CandyCrisis b) {
         int costA, costB;
