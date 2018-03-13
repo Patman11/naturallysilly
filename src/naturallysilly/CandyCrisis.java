@@ -66,7 +66,8 @@ public class CandyCrisis {
 
     private final char[][] grid; //actual game grid
     private final Keys[][] gridKeys; //grid displaying input keys, also used 
-    private Keys lastPosition = null; //will store the last position upon invoking swap()
+    private Keys lastPosition; //will store the last position upon invoking swap()
+    private int cost;
     private long startTime;
     private long endTime;
     private final Queue<Character> moves;
@@ -82,6 +83,8 @@ public class CandyCrisis {
         moves = new LinkedList<>();
         grid = new char[HEIGHT][WIDTH];
         gridKeys = new Keys[HEIGHT][WIDTH];
+        lastPosition = null;
+        cost = 0;
         char c;
         for (int n = 0; n < HEIGHT; ++n) {
             for (int m = 0; m < WIDTH; ++m) {
@@ -207,12 +210,20 @@ public class CandyCrisis {
         System.out.println();
     }
     
+    /**
+     * Runs the heuristic and adds the current cost
+     * @return 
+     */
+    public final int cost() {
+        return heuristic() + cost;
+    }
+    
     /*
      * Heuristic, searches for the closest matching charater
      * for each character in the bottom row
      * @return the evaluation
      */
-    private int evaluatePosition() {
+    private int heuristic() {
         int result = 0, bottomRow = HEIGHT - 1, toMatchY, toMatchX;
         char toMatch;
         for (int n = 0; n < WIDTH; ++n) {
@@ -251,7 +262,7 @@ public class CandyCrisis {
         Keys empty;
         int currentEvaluation, nextEvaluation, bestEvaluationIndex;
         while (!isFinished()){
-            currentEvaluation = evaluatePosition();
+            currentEvaluation = heuristic();
             nextMoves = getValidMoves();
             bestEvaluationIndex = 0;
             empty = getEmptyKey();
@@ -263,7 +274,7 @@ public class CandyCrisis {
                     continue;
                 }
                 swap(empty, nextMoves[n], false);
-                nextEvaluation = evaluatePosition();
+                nextEvaluation = heuristic();
                 if (nextEvaluation < currentEvaluation) {
                     currentEvaluation = nextEvaluation;
                     bestEvaluationIndex = n;
@@ -287,6 +298,7 @@ public class CandyCrisis {
         grid[initial.HEIGHT][initial.WIDTH] = grid[target.HEIGHT][target.WIDTH];
         grid[target.HEIGHT][target.WIDTH] = temp;
         if (replaceLastPosition) {
+            ++cost;
             lastPosition = initial;
         }
     }
