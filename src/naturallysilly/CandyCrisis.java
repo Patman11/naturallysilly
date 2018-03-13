@@ -177,7 +177,7 @@ public class CandyCrisis {
             return false;
         }
         if (validate(empty, key)) {
-            swap(empty, key, false);
+            swap(empty, key);
             return true;
         }
         return false;
@@ -282,21 +282,37 @@ public class CandyCrisis {
         }
         return result;
     }
+    
+    private void steepestAscent() {
+        Keys[] nextMoves;
+        Keys empty;
+        int currentEvaluation, nextEvaluation, bestEvaluationIndex;
+        while (!isFinished()){
+            currentEvaluation = evaluatePosition();
+            nextMoves = getValidMoves();
+            bestEvaluationIndex = 0;
+            empty = getEmptyKey();
+            for (Keys nextMove : nextMoves) {
+                if (nextMove == lastPosition) {
+                    ++bestEvaluationIndex;
+                    continue;
+                }
+                //still working on it
+            }
+        }
+    }
 
     /*
      * Unvalidated swap of 2 characters, should not be used
      * from user input
      * @param initial position of empty space
      * @param target desired position of empty space
-     * @param preserveInitial keep the last position in memory?
      */
-    private void swap(Keys initial, Keys target, boolean preserveInitial) {
+    private void swap(Keys initial, Keys target) {
         char temp = grid[initial.HEIGHT][initial.WIDTH];
         grid[initial.HEIGHT][initial.WIDTH] = grid[target.HEIGHT][target.WIDTH];
         grid[target.HEIGHT][target.WIDTH] = temp;
-        if(preserveInitial) {
-            lastPosition = initial;
-        }
+        lastPosition = initial;
     }
 
     /*
