@@ -18,6 +18,5 @@ public class NaturallySilly {
     public static void main(String[] args) {
         List<String> gameStrings = CandyCrisis.parseFile("game.txt");
         CandyCrisis game = new CandyCrisis(gameStrings.get(0));
-        game.start();
     }
 }
