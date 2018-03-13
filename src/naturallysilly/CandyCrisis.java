@@ -137,6 +137,7 @@ public class CandyCrisis {
             boolean exit = false;
             startTime = System.nanoTime();
             while (!exit) {
+                steepestAscent(); //this is where the heuristic starts
                 display();
                 displayValidMoves();
                 System.out.println(CURRENT_EVALUATION + evaluatePosition());
@@ -177,7 +178,7 @@ public class CandyCrisis {
             return false;
         }
         if (validate(empty, key)) {
-            swap(empty, key);
+            swap(empty, key, true);
             return true;
         }
         return false;
@@ -292,13 +293,23 @@ public class CandyCrisis {
             nextMoves = getValidMoves();
             bestEvaluationIndex = 0;
             empty = getEmptyKey();
-            for (Keys nextMove : nextMoves) {
-                if (nextMove == lastPosition) {
-                    ++bestEvaluationIndex;
+            for (int n = 0; n < nextMoves.length; ++n) {
+                if (nextMoves[n] == null) {
+                    break;
+                }
+                if (nextMoves[n] == lastPosition) {
                     continue;
                 }
-                //still working on it
+                swap(empty, nextMoves[n], false);
+                nextEvaluation = evaluatePosition();
+                if (nextEvaluation < currentEvaluation) {
+                    currentEvaluation = nextEvaluation;
+                    bestEvaluationIndex = n;
+                }
+                swap(nextMoves[n], empty, false);                
             }
+            swap(empty, nextMoves[bestEvaluationIndex], true);
+            moves.add(nextMoves[bestEvaluationIndex].VALUE);
         }
     }
 
@@ -307,12 +318,15 @@ public class CandyCrisis {
      * from user input
      * @param initial position of empty space
      * @param target desired position of empty space
+     * @param changeInitial when committing to a move, set to true so the previous move is preserved
      */
-    private void swap(Keys initial, Keys target) {
+    private void swap(Keys initial, Keys target, boolean replaceLastPosition) {
         char temp = grid[initial.HEIGHT][initial.WIDTH];
         grid[initial.HEIGHT][initial.WIDTH] = grid[target.HEIGHT][target.WIDTH];
         grid[target.HEIGHT][target.WIDTH] = temp;
-        lastPosition = initial;
+        if (replaceLastPosition) {
+            lastPosition = initial;
+        }
     }
 
     /*
