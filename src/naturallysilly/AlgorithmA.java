@@ -11,7 +11,7 @@ import java.util.PriorityQueue;
  */
 public class AlgorithmA {
 
-    private static final int INITIAL_CAPACITY = 16;
+    private static final int INITIAL_CAPACITY = 32;
     private final PriorityQueue<CandyCrisis> queue;
     private final CandyCrisisComparator comparator;
     

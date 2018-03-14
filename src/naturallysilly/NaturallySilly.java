@@ -17,8 +17,8 @@ public class NaturallySilly {
      */
     public static void main(String[] args) {
         List<String> gameStrings = CandyCrisis.parseFile("game.txt");
-        CandyCrisis game = new CandyCrisis(gameStrings.get(0));
-        AlgorithmA a = new AlgorithmA(game);
-        a.start();
+        gameStrings.stream().map((gameString) -> new CandyCrisis(gameString)).map((game) -> new AlgorithmA(game)).forEachOrdered((a) -> {
+            a.start();
+        });
     }
 }
