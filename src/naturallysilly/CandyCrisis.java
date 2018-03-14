@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.Scanner;
 
 /**
  *
@@ -45,6 +46,9 @@ public class CandyCrisis {
     private long startTime;
     private final Queue<Character> moves;
     
+    /**
+     * This object's ID
+     */
     public final int id; //id can be public since it's final anyway
     
     /**
@@ -141,12 +145,52 @@ public class CandyCrisis {
         }
     }
     
+    /**
+     * Copies a game, preserves the ID
+     * @param orig 
+     */
     public CandyCrisis(CandyCrisis orig) {
         moves = orig.getMoves();
         grid = orig.getGrid();
         lastPosition = orig.getLastPosition();
         cost = orig.getCost();
         id = orig.id; //DONT INCREMENT THE ID
+    }
+    
+    /**
+     * Starts accepting user input so you can play the game
+     */
+    public final void userStart() {
+        try (Scanner keyboard = new Scanner(System.in)) {
+            boolean exit = false;
+            startTime = System.nanoTime();
+            while (!exit) {
+                display();
+                displayValidMoves();
+                System.out.println(CURRENT_EVALUATION + heuristic());
+                if (isFinished()) {
+                    WriteOutputFile();
+                    endTime = System.nanoTime();
+                    System.out.println(FINISHED_GAME + "true");
+                    break;
+                }
+                System.out.println(ENTER_NEXT_MOVE);
+                char value = keyboard.next().charAt(0);
+                if (value == 'x') {
+                    endTime = System.nanoTime();
+                    WriteOutputFile();
+                    exit = true;
+                    System.out.println(FINISHED_GAME + isFinished());
+                } else {
+                    /*This is where we need to check that the move is valid*/
+                    if (move(value)) {
+                        moves.add(value);
+                    } else {
+                        System.out.println(INVALID_MOVE);
+                    }
+                }
+            }
+        }
     }
 
     /*
