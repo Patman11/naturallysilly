@@ -32,10 +32,11 @@ public class AlgorithmA {
         CandyCrisis currentState, newState;
         Keys[] nextMoves;
         Keys empty;
-        queue.peek().setStartTime(System.currentTimeMillis());
+        long startTime = System.currentTimeMillis();
         while (true) {
             currentState = queue.poll();
             if (currentState.isFinished()) {
+                currentState.setStartTime(startTime);
                 currentState.setEndTime(System.currentTimeMillis());
                 currentState.WriteOutputFile();
                 break;

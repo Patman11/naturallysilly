@@ -147,6 +147,7 @@ public class CandyCrisis {
     
     /**
      * Copies a game, preserves the ID
+     * WARNING: doesn't copy the startTime
      * @param orig 
      */
     public CandyCrisis(CandyCrisis orig) {
