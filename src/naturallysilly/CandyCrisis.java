@@ -176,8 +176,8 @@ public class CandyCrisis {
                     break;
                 }
                 System.out.println(ENTER_NEXT_MOVE);
-                char value = keyboard.next().charAt(0);
-                if (value == 'x') {
+                char value = keyboard.next().toUpperCase().charAt(0);
+                if (value == 'X') {
                     endTime = System.nanoTime();
                     WriteOutputFile();
                     exit = true;
@@ -432,8 +432,8 @@ public class CandyCrisis {
         Iterator<Character> iterator = moves.iterator();
         while (iterator.hasNext()) {
             char element = moves.remove();
-            System.out.print(element + " ");
-            output.print(element + " ");
+            System.out.print(element);
+            output.print(element);
         }
         System.out.println();
         output.println();

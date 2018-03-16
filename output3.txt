@@ -1,2 +1,2 @@
-h g b a f g l m n o j 
-4ms
+HGBAFGLMNOJ
+0ms
