@@ -24,7 +24,7 @@ import java.util.Scanner;
  */
 public class CandyCrisis {
     
-    private static int objectCount = 1;
+    private static int outputFileID = 0;
     private static final int WIDTH = 5;
     private static final int HEIGHT = 3;
     private static final String PADDING = "  ";
@@ -36,6 +36,7 @@ public class CandyCrisis {
     private static final String FINISHED_GAME = "Finished game: ";
     private static final String VALID_MOVES = "Valid moves: ";
     private static final String CURRENT_EVALUATION = "Current evaluation: ";
+    private static final String OUTPUT_FILE_ERROR = "Error opening the output file";
     private static final char NULL = '\u0000';
     private static final Keys[][] GRID_KEYS = new Keys[HEIGHT][WIDTH]; //grid displaying input keys
 
@@ -45,11 +46,6 @@ public class CandyCrisis {
     private long endTime;
     private long startTime;
     private final Queue<Character> moves;
-    
-    /**
-     * This object's ID
-     */
-    public final int id; //id can be public since it's final anyway
     
     /**
      * 
@@ -138,11 +134,14 @@ public class CandyCrisis {
                 }
             }
         }
-        id = objectCount;
-        ++objectCount;
         if (GRID_KEYS[0][0] == null) {
             generateKeyMap();
         }
+    }
+    
+    public CandyCrisis(String gameString, int ID) {
+        this(gameString);
+        outputFileID = ID;
     }
     
     /**
@@ -155,7 +154,6 @@ public class CandyCrisis {
         grid = orig.getGrid();
         lastPosition = orig.getLastPosition();
         cost = orig.getCost();
-        id = orig.id; //DONT INCREMENT THE ID
     }
     
     /**
@@ -327,7 +325,7 @@ public class CandyCrisis {
             }
             outerloop:
             for (int y = 0; y < HEIGHT; ++y) {
-                //search row towards the left
+                //search row towards the right
                 for (int x = n; x < WIDTH; ++x) {
                     if (toMatch == grid[y][x]) {
                         toMatchY = bottomRow - (bottomRow - y); //this should always be positive
@@ -336,7 +334,7 @@ public class CandyCrisis {
                         break outerloop;
                     }
                 }
-                //search row towards the right
+                //search row towards the left
                 for (int x = n - 1; x >= 0; --x) {
                     if (toMatch == grid[y][x]) {
                         toMatchY = bottomRow - (bottomRow - y); //this should always be positive
@@ -484,13 +482,12 @@ public class CandyCrisis {
      * Open the output file and check for error
      */
     public void WriteOutputFile() {
-        try (PrintWriter output = new PrintWriter(new FileOutputStream("output.txt", true))) {
+        try (PrintWriter output = new PrintWriter(new FileOutputStream("output" + outputFileID + ".txt", true))) {
             long totalTime = endTime - startTime;
             displayPath(output);
             output.println(totalTime + "ms");
-            output.println();
         } catch (FileNotFoundException e) {
-            System.out.println("Error opening the file output.txt");
+            System.out.println(OUTPUT_FILE_ERROR);
             System.exit(0);
         }
     }
