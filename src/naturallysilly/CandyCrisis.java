@@ -484,10 +484,11 @@ public class CandyCrisis {
      * Open the output file and check for error
      */
     public void WriteOutputFile() {
-        try (PrintWriter output = new PrintWriter(new FileOutputStream("output" + id + ".txt"))) {
+        try (PrintWriter output = new PrintWriter(new FileOutputStream("output.txt", true))) {
             long totalTime = endTime - startTime;
             displayPath(output);
             output.println(totalTime + "ms");
+            output.println();
         } catch (FileNotFoundException e) {
             System.out.println("Error opening the file output.txt");
             System.exit(0);
