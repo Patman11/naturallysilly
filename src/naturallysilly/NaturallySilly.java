@@ -22,64 +22,60 @@ public class NaturallySilly {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        removeOutputFiles();
         List<String> easyStrings = CandyCrisis.parseFile("input1.txt");
         List<String> mediumStrings = CandyCrisis.parseFile("input2.txt");
         List<String> expertStrings = CandyCrisis.parseFile("input3.txt");
         List<String> masterStrings = CandyCrisis.parseFile("input4.txt");
-        
-        removeOutputFiles();
-        
         easyStrings.stream().map((gameString) -> new CandyCrisis(gameString, 1)).map(AlgorithmA::new).forEachOrdered(AlgorithmA::start);
         mediumStrings.stream().map((gameString) -> new CandyCrisis(gameString, 2)).map(AlgorithmA::new).forEachOrdered(AlgorithmA::start);
         expertStrings.stream().map((gameString) -> new CandyCrisis(gameString, 3)).map(AlgorithmA::new).forEachOrdered(AlgorithmA::start);
         masterStrings.stream().map((gameString) -> new CandyCrisis(gameString, 4)).map(AlgorithmA::new).forEachOrdered(AlgorithmA::start);
-        
         appendTotalNumberOfMovesToOutput();
-        
         System.out.println("Done!");
     }
     
+    /*
+     * Calculates total number of moves made in each output file
+     */
     private static void appendTotalNumberOfMovesToOutput() {
-    	File currentDirectory = new File(".");
-    	File[] files = currentDirectory.listFiles();
-    	for (File file: files) {
-    		if (file.getName().startsWith("output")) {
-  	
-		    	ArrayList<String> list = new ArrayList<String>();
-				try (Scanner scanner = new Scanner(file)) {
-		
-			    	while (scanner.hasNext()){
-			    	    list.add(scanner.next());
-			    	}
-			    	scanner.close();
-			    	
-			    	int totalNumberOfMoves = 0;
-			    	for (int i = 0; i < list.size(); i += 2) {
-			    		String line = list.get(i);
-			    		totalNumberOfMoves += line.length();
-			    	}
-			    	
-			    	try (PrintWriter output = new PrintWriter(new FileOutputStream(file, true))) {
-			            output.println(totalNumberOfMoves);
-			        } catch (FileNotFoundException e) {
-			        	e.printStackTrace();
-			        }
-			    	
-				} catch (FileNotFoundException e) {
-					e.printStackTrace();
-				}
-    		}
-    	}
+        File currentDirectory = new File(".");
+        File[] files = currentDirectory.listFiles();
+        for (File file : files) {
+            if (file.getName().startsWith("output")) {
+                ArrayList<String> list = new ArrayList<>();
+                try (Scanner scanner = new Scanner(file)) {
+                    while (scanner.hasNext()) {
+                        list.add(scanner.next());
+                    }
+                    scanner.close();
+                    int totalNumberOfMoves = 0;
+                    for (int i = 0; i < list.size(); i += 2) {
+                        String line = list.get(i);
+                        totalNumberOfMoves += line.length();
+                    }
+                    try (PrintWriter output = new PrintWriter(new FileOutputStream(file, true))) {
+                        output.println(totalNumberOfMoves);
+                    } catch (FileNotFoundException e) {
+                        System.err.println(e.toString());
+                    }
+                } catch (FileNotFoundException e) {
+                    System.err.println(e.toString());
+                }
+            }
+        }
     }
     
+    /*
+     * Removes files in the current directory that start with output
+     */
     private static void removeOutputFiles() {
-    	File currentDirectory = new File(".");
-    	File[] files = currentDirectory.listFiles();
-    	
-    	for (File file: files) {
-    		if (file.getName().startsWith("output")) {
-    			file.delete();
-    		}
-    	}
+        File currentDirectory = new File(".");
+        File[] files = currentDirectory.listFiles();
+        for (File file : files) {
+            if (file.getName().startsWith("output")) {
+                file.delete();
+            }
+        }
     }
 }
