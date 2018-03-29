@@ -35,6 +35,8 @@ public class NaturallySilly {
         masterStrings.stream().map((gameString) -> new CandyCrisis(gameString, 4)).map(AlgorithmA::new).forEachOrdered(AlgorithmA::start);
         
         appendTotalNumberOfMovesToOutput();
+        
+        System.out.println("Done!");
     }
     
     private static void appendTotalNumberOfMovesToOutput() {
